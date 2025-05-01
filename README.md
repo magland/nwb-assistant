@@ -14,3 +14,5 @@ Then there is an API endpoint that does the RAG retrieval:
 
 https://github.com/flatironinstitute/neurosift/tree/main-v2/nextjs/neurosift-chat-agent-tools
 This is the tool: https://github.com/flatironinstitute/neurosift/tree/main-v2/nextjs/neurosift-chat-agent-tools/src/app/api/pynwb_docs_semantic_search
+
+This web app provides the chat interface and allows the agent access to that API endpoint.
