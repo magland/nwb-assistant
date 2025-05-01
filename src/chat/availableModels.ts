@@ -1,0 +1,34 @@
+export const AVAILABLE_MODELS = [
+    {
+      model: "google/gemini-2.0-flash-001",
+      label: "gemini-2.0-flash-001",
+      cost: {
+        prompt: 0.1,
+        completion: 0.4,
+      },
+    },
+    {
+      model: "google/gemini-2.5-pro-preview-03-25",
+      label: "gemini-2.5-pro-preview-03-25",
+      cost: {
+        prompt: 1.25,
+        completion: 10,
+      },
+    },
+    {
+      model: "anthropic/claude-3.5-sonnet",
+      label: "claude-3.5-sonnet",
+      cost: {
+        prompt: 3,
+        completion: 15,
+      },
+    },
+    {
+      model: "openai/gpt-4o-mini",
+      label: "gpt-4o-mini",
+      cost: {
+        prompt: 0.15,
+        completion: 0.6,
+      },
+    },
+  ];
