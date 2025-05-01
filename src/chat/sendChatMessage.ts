@@ -69,7 +69,7 @@ export const sendChatMessage = async (
       : null;
   if (
     lastSystemMessage &&
-    lastSystemMessage.content === systemMessageForAIContext.content
+    lastSystemMessage.content === systemMessageForAIContext?.content
   ) {
     // if it is the same, then we don't need to add it again
     systemMessageForAIContext = null;
