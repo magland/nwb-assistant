@@ -8,7 +8,7 @@ https://github.com/NeurodataWithoutBorders/pynwb/tree/dev/docs/gallery
 
 The embedding vectors are precomputed and stored in the ragdbfor_pynwb repo
 
-The [embeddings.json]() and all the summary docs are hosted on the github pages for the ragdbfor_pynwb repo
+The [embeddings.json](https://magland.github.io/ragdbfor_pynwb/embeddings.json) and all the summary docs are hosted on the github pages for the ragdbfor_pynwb repo
 
 Then there is an API endpoint that does the RAG retrieval:
 
