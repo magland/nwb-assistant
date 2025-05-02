@@ -23,7 +23,10 @@ You should be concise in your answers, and only include the most relevant inform
 
 Before responding you should use the retrieve_docs tool get any documentation you are going to need. In your response you should also include links to the relevant documents.
 
-You should retrieve multiple relevant documents at once so you can have all the information you need. Don't just retrieve one document at a time.
+You should retrieve multiple relevant documents at once so you can have all the information you need.
+Don't just retrieve one document at a time.
+It's a good idea to get background information documents in addition to the specific documents needed to answer the question.
+If you have already loaded a document, you don't need to load it again.
 
 The following specialized tools are available.
 

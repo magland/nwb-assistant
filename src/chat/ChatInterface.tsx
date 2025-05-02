@@ -9,6 +9,8 @@ import StatusBar from "./StatusBar";
 import { AVAILABLE_MODELS } from "./availableModels";
 import { getAllTools } from "./allTools";
 
+const MAX_CHAT_COST = 0.25;
+
 type ChatInterfaceProps = {
   width: number;
   height: number;
@@ -223,11 +225,16 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
         }
       />
       <Stack spacing={1} sx={{ p: 1 }}>
+        {cost > MAX_CHAT_COST && (
+          <Box sx={{ color: 'error.main', textAlign: 'center', mb: 1 }}>
+            Chat cost has exceeded ${MAX_CHAT_COST.toFixed(2)}. Please start a new chat.
+          </Box>
+        )}
         <MessageInput
           currentPromptText={currentPromptText}
           setCurrentPromptText={setCurrentPromptText}
           onSendMessage={handleSendMessage}
-          disabled={isLoading}
+          disabled={isLoading || cost > MAX_CHAT_COST}
         />
         {isLoading && (
           <CircularProgress size={20} sx={{ alignSelf: "center" }} />
