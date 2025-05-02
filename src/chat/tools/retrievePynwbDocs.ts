@@ -66,7 +66,7 @@ export const execute = async (
   }
 };
 
-export const detailedDescription = `
+export const getDetailedDescription = async () => (`
 Semantic search for pynwb usage documents using natural language.
 
 Semantic embeddings are used to find pynwb or neuroconv documents relevant to the query text.
@@ -86,6 +86,6 @@ The output is { results: {docUrl: string, docText: string}[] } where each string
 It is a good idea to link to particular documents in your reply. That way the user can go to the source. Use the docUrl to form the links.
 
 But any links you provide should be directly relevant to what the user is seeking information about.
-`;
+`);
 
 export const requiresPermission = false;

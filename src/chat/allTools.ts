@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as retrievePynwbDocs from "./tools/retrievePynwbDocs";
+// import * as retrievePynwbDocs from "./tools/retrievePynwbDocs";
+import * as retrieveDocs from "./tools/retrieveDocs";
 
 import { ORFunctionDescription } from "./openRouterTypes";
 
@@ -9,11 +10,12 @@ interface ToolExecutionContext {}
 interface NCTool {
   toolFunction: ORFunctionDescription;
   execute: (params: any, o?: ToolExecutionContext) => Promise<string>;
-  detailedDescription: string;
+  getDetailedDescription: () => Promise<string>;
   requiresPermission: boolean;
 }
 
-const staticTools: NCTool[] = [retrievePynwbDocs];
+// const staticTools: NCTool[] = [retrievePynwbDocs, retrieveDocs];
+const staticTools: NCTool[] = [retrieveDocs];
 
 export const getAllTools = async () => {
   return [...staticTools] as const;

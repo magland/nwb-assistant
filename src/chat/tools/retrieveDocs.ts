@@ -1,0 +1,111 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ORFunctionDescription } from "../openRouterTypes";
+
+export const toolFunction: ORFunctionDescription = {
+  name: "retrieve_docs",
+  description: "Retrieve content from a list of documents.",
+  parameters: {
+    type: "object",
+    properties: {
+      urls: {
+        type: "array",
+        items: {
+          type: "string"
+        },
+        description: "List of document URLs to retrieve",
+      },
+    },
+    required: ["urls"]
+  },
+};
+
+type RetrieveDocsParams = {
+  urls: string[];
+};
+
+let cachedDocIndex: string | null = null;
+
+async function getDocIndex(): Promise<string> {
+  if (cachedDocIndex) return cachedDocIndex;
+
+  const response = await fetch("https://raw.githubusercontent.com/magland/nwb-doc-index/refs/heads/main/index.md");
+  if (!response.ok) {
+    throw new Error(`Error fetching doc index: ${response.statusText}`);
+  }
+  const text = await response.text();
+  cachedDocIndex = text;
+  return text;
+}
+
+export const execute = async (
+  params: RetrieveDocsParams,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _o: any,
+): Promise<string> => {
+  const { urls } = params;
+
+  try {
+    // Fetch content for each URL
+    const results = await Promise.all(
+      urls.map(async (url) => {
+        const sourceUrl = getSourceUrl(url);
+        const response = await fetch(sourceUrl);
+        if (!response.ok) {
+          return { url, content: `Error: ${response.statusText}` };
+        }
+        const content = await response.text();
+        return { url, content };
+      })
+    );
+
+    return JSON.stringify(results, null, 2);
+  } catch (error) {
+    return JSON.stringify(
+      { error: error instanceof Error ? error.message : "Unknown error" },
+      null,
+      2
+    );
+  }
+};
+
+const getSourceUrl = (url: string): string => {
+    // https://neuroconv.readthedocs.io/en/main/conversion_examples_gallery/behavior/audio.html
+    // goes to
+    // https://raw.githubusercontent.com/catalystneuro/neuroconv/refs/heads/main/docs/conversion_examples_gallery/behavior/audio.rst
+    if (url.startsWith("https://neuroconv.readthedocs.io/")) {
+        let relpart = url.slice("https://neuroconv.readthedocs.io/en/main/".length);
+        relpart = relpart.replace(/\.html$/, ".rst");
+        return `https://raw.githubusercontent.com/catalystneuro/neuroconv/refs/heads/main/docs/${relpart}`;
+    }
+
+    // https://pynwb.readthedocs.io/en/latest/tutorials/general/plot_file.html
+    // goes to
+    // https://raw.githubusercontent.com/NeurodataWithoutBorders/pynwb/refs/heads/dev/docs/gallery/general/plot_file.py
+    if (url.startsWith("https://pynwb.readthedocs.io/")) {
+        let relpart = url.slice("https://pynwb.readthedocs.io/en/latest/".length);
+        relpart = relpart.replace(/\.html$/, ".py");
+        relpart = relpart.replace(/tutorials\//, "gallery/");
+        return `https://raw.githubusercontent.com/NeurodataWithoutBorders/pynwb/refs/heads/dev/docs/${relpart}`;
+    }
+
+    throw new Error(`Unsupported URL: ${url}`);
+}
+
+export const getDetailedDescription = async () => {
+    const docIndex = await getDocIndex();
+    return `Retrieve content from a list of document URLs.
+
+The tool first validates that all provided URLs are in the allowed list
+
+The output is a JSON array where each element has the form:
+{
+  "url": "document URL",
+  "content": "document content"
+}
+
+Here is the list of all available documents with descriptions:
+
+${docIndex}`;
+}
+
+export const requiresPermission = false;

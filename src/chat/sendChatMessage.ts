@@ -21,6 +21,8 @@ You will respond with markdown formatted text.
 
 You should be concise in your answers, and only include the most relevant information, unless told otherwise.
 
+Before responding you should use the retrieve_docs tool get any documentation you are going to need. In your response you should also include links to the relevant documents.
+
 The following specialized tools are available.
 
 `;
@@ -28,7 +30,7 @@ The following specialized tools are available.
   const tools = await getAllTools();
   for (const a of tools) {
     d += `## Tool: ${a.toolFunction.name}`;
-    d += a.detailedDescription;
+    d += await a.getDetailedDescription();
     d += "\n\n";
   }
 

@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -32,8 +32,12 @@ const MarkdownContent: FunctionComponent<MarkdownContentProps> = ({
           const match = /language-(\w+)/.exec(className || "");
           const code = String(children).replace(/\n$/, "");
 
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          const [copied, setCopied] = useState(false);
+
           const handleCopy = () => {
             navigator.clipboard.writeText(code);
+            setCopied(true);
           };
 
           return match ? (
@@ -47,6 +51,7 @@ const MarkdownContent: FunctionComponent<MarkdownContentProps> = ({
               <button
                 onClick={handleCopy}
                 style={{
+                  color: "black",
                   position: "absolute",
                   right: "8px",
                   bottom: "24px",
@@ -58,7 +63,7 @@ const MarkdownContent: FunctionComponent<MarkdownContentProps> = ({
                   cursor: "pointer",
                 }}
               >
-                Copy
+                {copied ? "Copied!" : "Copy"}
               </button>
             </div>
           ) : (
