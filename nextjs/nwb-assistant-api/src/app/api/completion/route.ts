@@ -11,6 +11,16 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
+    const messages = body.messages;
+    const firstMessage = messages[0];
+    if (firstMessage.role !== "system") {
+      return NextResponse.json({ error: 'First message must be a system message' }, { status: 400 });
+    }
+    const firstMessageContent = firstMessage.content;
+    if (!firstMessageContent.includes("If the user asks questions that are not related to NWB or neurophysiology, politely refuse to answer.")) {
+      return NextResponse.json({ error: 'First message must contain the correct system message' }, { status: 400 });
+    }
+
     const response = await fetch(OPENROUTER_API_URL, {
       method: "POST",
       headers: {
