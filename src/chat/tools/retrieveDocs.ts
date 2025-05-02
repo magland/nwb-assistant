@@ -88,6 +88,15 @@ const getSourceUrl = (url: string): string => {
         return `https://raw.githubusercontent.com/NeurodataWithoutBorders/pynwb/refs/heads/dev/docs/${relpart}`;
     }
 
+    // https://nwbinspector.readthedocs.io/en/dev/best_practices/behavior.html
+    // goes to
+    // https://raw.githubusercontent.com/catalystneuro/nwbinspector/refs/heads/dev/docs/best_practices/behavior.rst
+    if (url.startsWith("https://nwbinspector.readthedocs.io/")) {
+        let relpart = url.slice("https://nwbinspector.readthedocs.io/en/dev/".length);
+        relpart = relpart.replace(/\.html$/, ".rst");
+        return `https://raw.githubusercontent.com/catalystneuro/nwbinspector/refs/heads/dev/docs/${relpart}`;
+    }
+
     throw new Error(`Unsupported URL: ${url}`);
 }
 
