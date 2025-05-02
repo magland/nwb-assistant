@@ -6,9 +6,6 @@ import {
 } from "./openRouterTypes";
 import { getAllTools } from "./allTools";
 import { AVAILABLE_MODELS } from "./availableModels";
-import { getOpenRouterApiKey } from "./getOpenRouterApiKey";
-
-const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 const constructInitialSystemMessage = async () => {
   let d = ``;
@@ -105,15 +102,10 @@ export const sendChatMessage = async (
     })),
   };
 
-  const openRouterApiKey = getOpenRouterApiKey();
-  if (!openRouterApiKey) {
-    throw new Error("OpenRouter API key not set");
-  }
-  const response = await fetch(OPENROUTER_API_URL, {
+  const response = await fetch('https://nwb-assistant-api.vercel.app/api/completion', {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${openRouterApiKey}`,
     },
     body: JSON.stringify(request),
   });
