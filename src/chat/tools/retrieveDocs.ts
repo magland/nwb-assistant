@@ -97,6 +97,16 @@ const getSourceUrl = (url: string): string => {
         return `https://raw.githubusercontent.com/catalystneuro/nwbinspector/refs/heads/dev/docs/${relpart}`;
     }
 
+    // https://hdmf.readthedocs.io/en/stable/tutorials/multicontainerinterface.html
+    // goes to
+    // https://raw.githubusercontent.com/hdmf-dev/hdmf/refs/heads/dev/docs/gallery/multicontainerinterface.py
+    if (url.startsWith("https://hdmf.readthedocs.io/")) {
+        let relpart = url.slice("https://hdmf.readthedocs.io/en/stable/".length);
+        relpart = relpart.replace(/\.html$/, ".py");
+        relpart = relpart.replace(/tutorials\//, "gallery/");
+        return `https://raw.githubusercontent.com/hdmf-dev/hdmf/refs/heads/dev/docs/${relpart}`;
+    }
+
     throw new Error(`Unsupported URL: ${url}`);
 }
 
