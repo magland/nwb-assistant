@@ -30,6 +30,8 @@ Don't just retrieve one document at a time.
 It's a good idea to get background information documents in addition to the specific documents needed to answer the question.
 If you have already loaded a document, you don't need to load it again.
 
+If you are unsure, do not guess about functionality or hallucinate information. Stick to what you can learn from the documents. Feel free to read as many documents as you need.
+
 The following specialized tools are available.
 
 `;
