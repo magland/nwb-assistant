@@ -61,6 +61,7 @@ export const sendChatMessage = async (
   o: {
     onPendingMessages?: (messages: ORMessage[]) => void;
     askPermissionToRunTool: (toolCall: ORToolCall) => Promise<boolean>;
+    openRouterKey?: string;
   },
 ): Promise<ChatMessageResponse> => {
   // Create system message with tool descriptions
@@ -113,6 +114,7 @@ export const sendChatMessage = async (
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...(o.openRouterKey ? { "x-openrouter-key": o.openRouterKey } : {}),
     },
     body: JSON.stringify(request),
   });

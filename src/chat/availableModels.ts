@@ -24,6 +24,22 @@ export const AVAILABLE_MODELS = [
       },
     },
     {
+      model: "anthropic/claude-3.7-sonnet",
+      label: "claude-3.7-sonnet",
+      cost: {
+        prompt: 3,
+        completion: 15,
+      },
+    },
+    {
+      model: "openai/gpt-4o",
+      label: "gpt-4o",
+      cost: {
+        prompt: 2.5,
+        completion: 10,
+      },
+    },
+    {
       model: "openai/gpt-4o-mini",
       label: "gpt-4o-mini",
       cost: {

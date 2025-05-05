@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, CircularProgress, Stack } from "@mui/material";
 import { FunctionComponent, useEffect, useRef, useState } from "react";
+import OpenRouterKeyDialog from "./OpenRouterKeyDialog";
 import { ORMessage, ORToolCall } from "./openRouterTypes";
 import MessageInput from "./MessageInput";
 import MessageList from "./MessageList";
@@ -11,6 +12,11 @@ import { getAllTools } from "./allTools";
 
 const MAX_CHAT_COST = 0.25;
 
+const cheapModels = [
+  "google/gemini-2.0-flash-001",
+  "openai/gpt-4o-mini"
+]
+
 type ChatInterfaceProps = {
   width: number;
   height: number;
@@ -20,11 +26,14 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
   width,
   height,
 }) => {
-  const [selectedModel, setSelectedModel] = useState(
-    "google/gemini-2.0-flash-001",
-    // "anthropic/claude-3.5-sonnet",
-    // "google/gemini-2.5-pro-preview-03-25"
+  const [selectedModel, setSelectedModel] = useState(() =>
+    localStorage.getItem("selectedModel") || "google/gemini-2.0-flash-001"
   );
+
+  // Save model choice to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("selectedModel", selectedModel);
+  }, [selectedModel]);
   const [messages, setMessages] = useState<ORMessage[]>([]);
   const [pendingMessages, setPendingMessages] = useState<
     ORMessage[] | undefined
@@ -87,6 +96,7 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
               await new Promise((resolve) => setTimeout(resolve, 100));
             }
           },
+          openRouterKey
         },
       );
       setPendingMessages(undefined);
@@ -183,6 +193,20 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
   };
 
   const [currentPromptText, setCurrentPromptText] = useState("");
+  const [openRouterKey, setOpenRouterKey] = useState<string | undefined>(() => {
+    return localStorage.getItem("openRouterKey") || undefined;
+  });
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const handleSaveOpenRouterKey = (key: string) => {
+    if (key) {
+      localStorage.setItem("openRouterKey", key);
+      setOpenRouterKey(key);
+    } else {
+      localStorage.removeItem("openRouterKey");
+      setOpenRouterKey(undefined);
+    }
+  };
 
   return (
     <Box
@@ -230,11 +254,16 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
             Chat cost has exceeded ${MAX_CHAT_COST.toFixed(2)}. Please start a new chat.
           </Box>
         )}
+        {!cheapModels.includes(selectedModel) && !openRouterKey && (
+          <Box sx={{ color: 'error.main', textAlign: 'center', mb: 1 }}>
+            To use this model you need to provide your own OpenRouter key. Click the gear icon to enter it.
+          </Box>
+        )}
         <MessageInput
           currentPromptText={currentPromptText}
           setCurrentPromptText={setCurrentPromptText}
           onSendMessage={handleSendMessage}
-          disabled={isLoading || cost > MAX_CHAT_COST}
+          disabled={isLoading || cost > MAX_CHAT_COST || (!cheapModels.includes(selectedModel) && !openRouterKey)}
         />
         {isLoading && (
           <CircularProgress size={20} sx={{ alignSelf: "center" }} />
@@ -250,6 +279,13 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
         messages={messages}
         onDeleteChat={handleDeleteChat}
         onUploadChat={handleUploadChat}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+      />
+      <OpenRouterKeyDialog
+        open={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        currentKey={openRouterKey}
+        onSave={handleSaveOpenRouterKey}
       />
     </Box>
   );

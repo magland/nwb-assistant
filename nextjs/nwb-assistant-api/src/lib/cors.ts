@@ -10,7 +10,7 @@ export const allowedOrigins = [
 
 export const corsHeaders = {
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type'
+  'Access-Control-Allow-Headers': 'Content-Type, x-openrouter-key'
 };
 
 export function handleCorsHeaders(response: NextResponse, origin: string | null) {

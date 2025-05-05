@@ -2,14 +2,30 @@ import { NextResponse } from 'next/server';
 
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
+const cheapModels = [
+  "google/gemini-2.0-flash-001",
+  "openai/gpt-4o-mini"
+]
+
 export async function POST(request: Request) {
   try {
-    const apiKey = process.env.OPENROUTER_API_KEY;
+    const body = await request.json();
+    const userKey = request.headers.get('x-openrouter-key');
+    const isCheapModel = cheapModels.includes(body.model);
+
+    // For non-cheap models, require user's key
+    if (!isCheapModel && !userKey) {
+      return NextResponse.json(
+        { error: 'OpenRouter key required for model' + body.model },
+        { status: 400 }
+      );
+    }
+
+    // Use user key if provided, otherwise fall back to environment variable (for gemini)
+    const apiKey = userKey || process.env.OPENROUTER_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
     }
-
-    const body = await request.json();
 
     const messages = body.messages;
     const firstMessage = messages[0];

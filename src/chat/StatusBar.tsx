@@ -2,6 +2,7 @@
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import SettingsIcon from "@mui/icons-material/Settings";
 import {
   Box,
   FormControl,
@@ -24,6 +25,7 @@ const StatusBar: FunctionComponent<{
   messages: ORMessage[];
   onDeleteChat?: () => void;
   onUploadChat?: (chatData: any) => void;
+  onOpenSettings?: () => void;
 }> = ({
   selectedModel,
   onModelChange,
@@ -34,6 +36,7 @@ const StatusBar: FunctionComponent<{
   messages,
   onDeleteChat,
   onUploadChat,
+  onOpenSettings,
 }) => {
   const numMessages = messages.length;
 
@@ -104,6 +107,19 @@ const StatusBar: FunctionComponent<{
           }}
         >
           <DeleteOutlineIcon fontSize="small" />
+        </IconButton>
+        <IconButton
+          size="small"
+          title="OpenRouter Settings"
+          onClick={onOpenSettings}
+          sx={{
+            color: "text.secondary",
+            "&:hover": {
+              color: "primary.main",
+            },
+          }}
+        >
+          <SettingsIcon fontSize="small" />
         </IconButton>
       </Box>
       <Box
