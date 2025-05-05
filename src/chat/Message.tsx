@@ -108,6 +108,24 @@ const Message: FunctionComponent<MessageProps> = ({
       "tool_calls" in message &&
       message.tool_calls
     ) {
+      const toolCall1 = message.tool_calls[0];
+      if (toolCall1.type === "function") {
+        try {
+          if (toolCall1.function.name === "retrieve_docs") {
+            const urls = JSON.parse(toolCall1.function.arguments).urls;
+            return (
+              <div>
+                Retrieving docs: {urls.map((url: string) => (
+                  (url.split("/").pop() || url).replace(".html", "")
+                  )).join(", ")}
+              </div>
+            )
+          }
+        }
+        catch (e) {
+          console.error("Error parsing tool call arguments:", e);
+        }
+      }
       return (
         <Box>
           <Box
@@ -158,6 +176,25 @@ const Message: FunctionComponent<MessageProps> = ({
 
     // Handle tool results
     if (message.role === "tool" && "tool_call_id" in message) {
+      let formattedMessageContent = formatMessageContent(message.content);
+      let showAsMarkdown = true;
+      const toolName = findToolName(message.tool_call_id);
+      if (toolName === "retrieve_docs") {
+        try {
+          const a = JSON.parse(message.content);
+          let newFormattedMessageContent = "";
+          for (const doc of a) {
+            newFormattedMessageContent += `${doc.url}\n\n`;
+            newFormattedMessageContent += doc.content;
+
+          }
+          formattedMessageContent = newFormattedMessageContent;
+          showAsMarkdown = false;
+        }
+        catch (e) {
+          console.error("Error parsing tool call arguments:", e);
+        }
+      }
       return (
         <Box>
           <Box
@@ -170,7 +207,7 @@ const Message: FunctionComponent<MessageProps> = ({
           >
             <Box sx={{ mr: 2 }}>
               <Typography variant="body2" color="text.secondary">
-                Tool Result: {findToolName(message.tool_call_id)}
+                Tool Result: {toolName}
               </Typography>
             </Box>
             <Button
@@ -183,9 +220,13 @@ const Message: FunctionComponent<MessageProps> = ({
           </Box>
           {toolResultExpanded && (
             <Box>
-              <MarkdownContent
-                content={formatMessageContent(message.content)}
-              />
+              {showAsMarkdown ? <MarkdownContent
+                content={formattedMessageContent}
+              /> : (
+                <pre>
+                  {formattedMessageContent}
+                </pre>
+              )}
             </Box>
           )}
         </Box>
