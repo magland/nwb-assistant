@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, CircularProgress, Stack } from "@mui/material";
-import { FunctionComponent, useEffect, useRef, useState } from "react";
+import { FunctionComponent, useEffect, useMemo, useRef, useState } from "react";
 import OpenRouterKeyDialog from "./OpenRouterKeyDialog";
 import { ORMessage, ORToolCall } from "./openRouterTypes";
 import MessageInput from "./MessageInput";
@@ -12,10 +12,7 @@ import { getAllTools } from "./allTools";
 
 const MAX_CHAT_COST = 0.25;
 
-const cheapModels = [
-  "google/gemini-2.0-flash-001",
-  "openai/gpt-4o-mini"
-]
+const cheapModels = ["google/gemini-2.0-flash-001", "openai/gpt-4o-mini"];
 
 type ChatInterfaceProps = {
   width: number;
@@ -26,8 +23,8 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
   width,
   height,
 }) => {
-  const [selectedModel, setSelectedModel] = useState(() =>
-    localStorage.getItem("selectedModel") || "google/gemini-2.0-flash-001"
+  const [selectedModel, setSelectedModel] = useState(
+    () => localStorage.getItem("selectedModel") || "google/gemini-2.0-flash-001"
   );
 
   // Save model choice to localStorage whenever it changes
@@ -69,7 +66,7 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
           askPermissionToRunTool: async (toolCall: ORToolCall) => {
             const allTools = await getAllTools();
             const tool = allTools.find(
-              (t) => t.toolFunction.name === toolCall.function.name,
+              (t) => t.toolFunction.name === toolCall.function.name
             );
             if (!tool) {
               throw new Error(`Tool not found: ${toolCall.function.name}`);
@@ -88,7 +85,7 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
                 if (toolCall2 === toolCall) {
                   setToolCallForPermission(undefined);
                   approvedToolCalls.current = approvedToolCalls.current.filter(
-                    (x) => x.toolCall !== toolCallForPermission,
+                    (x) => x.toolCall !== toolCallForPermission
                   );
                   return approved;
                 }
@@ -96,8 +93,8 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
               await new Promise((resolve) => setTimeout(resolve, 100));
             }
           },
-          openRouterKey
-        },
+          openRouterKey,
+        }
       );
       setPendingMessages(undefined);
 
@@ -179,7 +176,7 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
 
   const handleDeleteChat = () => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete the entire chat?",
+      "Are you sure you want to delete the entire chat?"
     );
     if (!confirmed) return;
 
@@ -208,6 +205,22 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
     }
   };
 
+  const messagesForUi = useMemo(() => {
+    const m = pendingMessages ? pendingMessages : messages;
+    const introMessage: ORMessage = {
+      role: "assistant",
+      content: `
+Ask me about the NWB format, the pynwb library, or the neurodata ecosystem.
+I have access to the documentation for
+[pynwb](https://pynwb.readthedocs.io),
+[neuroconv](https://neuroconv.readthedocs.io),
+[nwbinspector](https://nwbinspector.readthedocs.io),
+and [hdmf](https://hdmf.readthedocs.io).
+`,
+    };
+    return [introMessage, ...m];
+  }, [messages, pendingMessages]);
+
   return (
     <Box
       sx={{
@@ -219,7 +232,7 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
       }}
     >
       <MessageList
-        messages={pendingMessages ? pendingMessages : messages}
+        messages={messagesForUi}
         toolCallForPermission={toolCallForPermission}
         onSetToolCallApproval={(toolCall, approved) => {
           approvedToolCalls.current.push({ toolCall, approved });
@@ -229,7 +242,7 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
           !isLoading
             ? (msg) => {
                 const confirmed = window.confirm(
-                  "Are you sure you want to delete this message and all subsequent messages?",
+                  "Are you sure you want to delete this message and all subsequent messages?"
                 );
                 if (!confirmed) {
                   return;
@@ -242,7 +255,7 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
                 setToolCallForPermission(undefined);
                 approvedToolCalls.current = [];
                 setCurrentPromptText(
-                  typeof msg.content === "string" ? msg.content : "",
+                  typeof msg.content === "string" ? msg.content : ""
                 );
               }
             : undefined
@@ -250,20 +263,26 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
       />
       <Stack spacing={1} sx={{ p: 1 }}>
         {cost > MAX_CHAT_COST && (
-          <Box sx={{ color: 'error.main', textAlign: 'center', mb: 1 }}>
-            Chat cost has exceeded ${MAX_CHAT_COST.toFixed(2)}. Please start a new chat.
+          <Box sx={{ color: "error.main", textAlign: "center", mb: 1 }}>
+            Chat cost has exceeded ${MAX_CHAT_COST.toFixed(2)}. Please start a
+            new chat.
           </Box>
         )}
         {!cheapModels.includes(selectedModel) && !openRouterKey && (
-          <Box sx={{ color: 'error.main', textAlign: 'center', mb: 1 }}>
-            To use this model you need to provide your own OpenRouter key. Click the gear icon to enter it.
+          <Box sx={{ color: "error.main", textAlign: "center", mb: 1 }}>
+            To use this model you need to provide your own OpenRouter key. Click
+            the gear icon to enter it.
           </Box>
         )}
         <MessageInput
           currentPromptText={currentPromptText}
           setCurrentPromptText={setCurrentPromptText}
           onSendMessage={handleSendMessage}
-          disabled={isLoading || cost > MAX_CHAT_COST || (!cheapModels.includes(selectedModel) && !openRouterKey)}
+          disabled={
+            isLoading ||
+            cost > MAX_CHAT_COST ||
+            (!cheapModels.includes(selectedModel) && !openRouterKey)
+          }
         />
         {isLoading && (
           <CircularProgress size={20} sx={{ alignSelf: "center" }} />
