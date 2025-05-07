@@ -7,7 +7,7 @@ function App() {
     width: window.innerWidth,
     height: window.innerHeight
   });
-  const headerHeight = 60; // Fixed header height in pixels
+  const headerHeight = 40; // Fixed header height in pixels
 
   useEffect(() => {
     const handleResize = () => {
@@ -24,7 +24,7 @@ function App() {
   return (
     <Router>
       <div className="app">
-        <header>
+        <header style={{ height: headerHeight, display: 'flex', alignItems: 'center', padding: '0 20px', backgroundColor: '#282c34', color: 'white', fontFamily: 'Comfortaa, sans-serif' }}>
           <h1><Link to="/nwb-assistant/" style={{ textDecoration: 'none', color: 'inherit' }}>NWB Assistant</Link></h1>
         </header>
 

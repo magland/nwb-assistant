@@ -210,6 +210,8 @@ const ChatInterface: FunctionComponent<ChatInterfaceProps> = ({
     const introMessage: ORMessage = {
       role: "assistant",
       content: `
+This is an experimental AI chat interface for the NWB ecosystem.
+
 Ask me about the NWB format, the pynwb library, or the neurodata ecosystem.
 I have access to the documentation for
 [pynwb](https://pynwb.readthedocs.io),
