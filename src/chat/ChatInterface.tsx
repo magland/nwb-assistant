@@ -9,6 +9,7 @@ import { sendChatMessage } from "./sendChatMessage";
 import StatusBar from "./StatusBar";
 import { AVAILABLE_MODELS } from "./availableModels";
 import { getAllTools } from "./allTools";
+import { GITHUB_ISSUES_URL } from "../config/constants";
 
 const MAX_CHAT_COST = 0.25;
 
@@ -218,6 +219,10 @@ I have access to the documentation for
 [neuroconv](https://neuroconv.readthedocs.io),
 [nwbinspector](https://nwbinspector.readthedocs.io),
 and [hdmf](https://hdmf.readthedocs.io).
+
+---
+
+**Found a bug or have feedback?** Please [submit an issue on GitHub](${GITHUB_ISSUES_URL}) to help us improve the NWB Assistant!
 `,
     };
     return [introMessage, ...m];
